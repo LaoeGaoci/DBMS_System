@@ -1,7 +1,29 @@
 #include "Entity/basic_function/Table.h"
 
+//增加字段
 void Table::addColumn(const std::string& name, const std::string& type, int length, bool isPrimaryKey, bool isNullable, const std::string& defaultValue) {
+    // 检查是否已存在同名列
+    for (const auto& column : columns) {
+        if (column.name == name) {
+            std::cerr << "Error: Column '" << name << "' already exists." << std::endl;
+            return;
+        }
+    }
     columns.push_back({ name, type, length, isPrimaryKey, isNullable, defaultValue });
+}
+//删除字段
+void Table::dropColumn(const std::string& name) {
+    auto it = std::remove_if(columns.begin(), columns.end(),
+                                                [&name](const Column& column) {
+                                                    return column.name == name;
+                                                });
+    if (it != columns.end()) {
+        // 如果找到了要删除的列，则从向量中删除
+        columns.erase(it, columns.end());
+    } else {
+        // 如果未找到，输出错误信息
+        std::cerr << "Error: Column '" << name << "' not found." << std::endl;
+    }
 }
 
 void Table::writeToDisk(std::ofstream& outFile) const {

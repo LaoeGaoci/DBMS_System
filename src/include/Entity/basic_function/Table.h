@@ -7,6 +7,7 @@
 #include <cstring>
 #include <string>
 #include <filesystem>
+#include <algorithm>
 
 class Table {
 public:
@@ -22,7 +23,8 @@ public:
     std::vector<Column> columns;
 
     void addColumn(const std::string& name, const std::string& type, int length, bool isPrimaryKey, bool isNullable, const std::string& defaultValue);
+    void dropColumn(const std::string& name);
     void writeToDisk(std::ofstream& outFile) const;
 };
 
-#endif // DATABASE_MANAGER_H
+#endif // RECORD_H

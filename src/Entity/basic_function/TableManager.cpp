@@ -1,13 +1,14 @@
+#include <set>
 #include "Entity/basic_function/TableManager.h"
 
 void TableManager::createTable(const std::string& dbName,
-                               const std::string& tableName,
-                               const std::vector<std::string>& columnNames,
-                               const std::vector<std::string>& columnTypes,
-                               const std::vector<int>& columnLengths,
-                               const std::vector<bool>& isPrimaryKeys,
-                               const std::vector<bool>& isNullables,
-                               const std::vector<std::string>& defaultValues) {
+                                const std::string& tableName,
+                                const std::vector<std::string>& columnNames,
+                                const std::vector<std::string>& columnTypes,
+                                const std::vector<int>& columnLengths,
+                                const std::vector<bool>& isPrimaryKeys,
+                                const std::vector<bool>& isNullables,
+                                const std::vector<std::string>& defaultValues) {
     // �������ݿ�·��
     fs::path dbPath = fs::current_path() / dbName;
     fs::create_directories(dbPath); // ȷ�����ݿ�Ŀ¼����
@@ -207,10 +208,10 @@ void TableManager::readTableData(const std::string& dbName, const std::string& t
 }
 
 void TableManager::readRecords(const std::string& dbName, const std::string& tableName,
-                               const std::vector<std::string>& fieldNames,
-                               const std::vector<std::string>& conditionColumn,
-                               const std::vector<std::string>& operation,
-                               const std::vector<std::string>& conditionValue) {
+                                const std::vector<std::string>& fieldNames,
+                                const std::vector<std::string>& conditionColumn,
+                                const std::vector<std::string>& operation,
+                                const std::vector<std::string>& conditionValue) {
     // ������ṹ�ļ�·���������ļ�·��
     fs::path schemaFilePath = fs::current_path() / dbName / tableName / (tableName + ".tdf");
     fs::path dataFilePath = fs::current_path() / dbName / tableName / (tableName + ".trd");
@@ -293,9 +294,9 @@ void TableManager::readRecords(const std::string& dbName, const std::string& tab
 }
 
 void TableManager::deleteRecords(const std::string& dbName, const std::string& tableName,
-                                 const std::vector<std::string>& conditionColumn,
-                                 const std::vector<std::string>& operation,
-                                 const std::vector<std::string>& conditionValue) {
+                                    const std::vector<std::string>& conditionColumn,
+                                    const std::vector<std::string>& operation,
+                                    const std::vector<std::string>& conditionValue) {
     // ������ṹ�ļ�·���������ļ�·��
     fs::path dataFilePath = fs::current_path() / dbName / tableName / (tableName + ".trd");
     fs::path tempPath = dataFilePath;
@@ -366,12 +367,12 @@ bool TableManager::isNumber(const std::string& str) {
 }
 
 void TableManager::updateTable(const std::string& dbName,
-                               const std::string& tableName,
-                               const std::vector<std::string>& conditionColumn,
-                               const std::vector<std::string>& operation,
-                               const std::vector<std::string>& conditionValue,
-                               const std::vector<std::string>& updateColumn,
-                               const std::vector<std::string>& updateValue) {
+                                const std::string& tableName,
+                                const std::vector<std::string>& conditionColumn,
+                                const std::vector<std::string>& operation,
+                                const std::vector<std::string>& conditionValue,
+                                const std::vector<std::string>& updateColumn,
+                                const std::vector<std::string>& updateValue) {
     fs::path dataFilePath = fs::current_path() / dbName / tableName / (tableName + ".trd");
     fs::path tempPath = dataFilePath;
     tempPath += ".tmp";
@@ -444,10 +445,10 @@ void TableManager::updateTable(const std::string& dbName,
 }
 
 void TableManager::orderByRecord(const std::string& dbName,
-                                 const std::string& tableName,
-                                 const std::vector<std::string>& sortColumn,
-                                 const std::vector<std::string>& orders,
-                                 const std::vector<std::string>& fieldNames) {
+                                    const std::string& tableName,
+                                    const std::vector<std::string>& sortColumn,
+                                    const std::vector<std::string>& orders,
+                                    const std::vector<std::string>& fieldNames) {
     Table table;
     if (!loadTableSchema(dbName, tableName, table)) {
         std::cerr << "Failed to load table schema." << std::endl;
@@ -494,8 +495,8 @@ void TableManager::orderByRecord(const std::string& dbName,
 }
 
 std::vector<std::vector<std::string>> TableManager::readSortTableData(const std::string& dbName,
-                                                                      const std::string& tableName,
-                                                                      const Table& table) {
+                                                                        const std::string& tableName,
+                                                                        const Table& table) {
     std::vector<std::vector<std::string>> data;
     fs::path dataFilePath = fs::current_path() / dbName / tableName / (tableName + ".trd");
     std::ifstream dataFile(dataFilePath, std::ios::binary);
@@ -539,4 +540,154 @@ std::vector<std::vector<std::string>> TableManager::readSortTableData(const std:
 
     dataFile.close();
     return data;
+}
+int calculateRowWidth(const std::vector<Table::Column>& columns) {
+    int width = 0;
+    for (const auto& col : columns) {
+        width += col.length;
+    }
+    return width;
+}
+
+
+//alter语句功能函数
+void TableManager::alter_addColumnToTable(const std::string& dbName,
+                            const std::string& tableName,
+                            const std::vector<std::string>& columnNames,
+                            const std::vector<std::string>& columnTypes,
+                            const std::vector<int>& columnLengths,
+                            const std::vector<bool>& isPrimaryKeys,
+                            const std::vector<bool>& isNullables,
+                            const std::vector<std::string>& defaultValues) {
+    fs::path tableDirPath = fs::current_path() / dbName / tableName;
+    fs::path dataFilePath = tableDirPath / (tableName + ".trd");
+    fs::path tempFilePath = dataFilePath;
+    tempFilePath += ".tmp";
+    fs::path schemaFilePath = tableDirPath / (tableName + ".tdf");
+
+    std::ifstream inFile(dataFilePath, std::ios::binary);
+    std::ofstream outFile(tempFilePath, std::ios::binary);
+
+    if (!inFile || !outFile) {
+        std::cerr << "Failed to open files for processing." << std::endl;
+        return;
+    }
+
+    Table table;
+    if (!loadTableSchema(dbName, tableName, table)) {
+        std::cerr << "Failed to load table schema." << std::endl;
+        return;
+    }
+
+    int originalRowWidth = calculateRowWidth(table.columns);
+    std::vector<char> rowBuffer(originalRowWidth);
+
+    for (size_t i = 0; i < columnNames.size(); ++i) {
+        table.addColumn(columnNames[i], columnTypes[i], columnLengths[i], isPrimaryKeys[i], isNullables[i], defaultValues[i]);
+    }
+
+    int newRowWidth = calculateRowWidth(table.columns);
+    std::vector<char> newRowBuffer(newRowWidth);
+
+
+    std::ofstream schemaOutFile(schemaFilePath, std::ios::binary | std::ios::trunc);
+    table.writeToDisk(schemaOutFile);
+    schemaOutFile.close();
+
+    while (inFile.read(rowBuffer.data(), originalRowWidth)) {
+        std::memcpy(newRowBuffer.data(), rowBuffer.data(), originalRowWidth);
+
+        int startPosition = originalRowWidth;
+        for (size_t i = 0; i < columnNames.size(); ++i) {
+            std::string defaultValue = defaultValues[i];
+            defaultValue.resize(columnLengths[i], '\0');  // Ensure fixed-length columns
+            std::memcpy(newRowBuffer.data() + startPosition, defaultValue.data(), columnLengths[i]);
+            startPosition += columnLengths[i];
+        }
+
+        outFile.write(newRowBuffer.data(), newRowWidth);
+    }
+
+    inFile.close();
+    outFile.close();
+
+    fs::remove(dataFilePath);
+    fs::rename(tempFilePath, dataFilePath);
+
+    std::cout << "Columns added successfully and data file updated." << std::endl;
+}
+void TableManager::alter_deleteColumns(const std::string& dbName,
+                                        const std::string& tableName,
+                                        const std::vector<std::string>& columnsToDelete) {
+    fs::path tableDirPath = fs::current_path() / dbName / tableName;
+    fs::path dataFilePath = tableDirPath / (tableName + ".trd");
+    fs::path tempFilePath = dataFilePath;
+    tempFilePath += ".tmp";
+    fs::path schemaFilePath = tableDirPath / (tableName + ".tdf");
+
+    std::ifstream inFile(dataFilePath, std::ios::binary);
+    std::ofstream outFile(tempFilePath, std::ios::binary);
+
+    if (!inFile || !outFile) {
+        std::cerr << "Failed to open files for processing." << std::endl;
+        return;
+    }
+
+    Table table;
+    if (!loadTableSchema(dbName, tableName, table)) {
+        std::cerr << "Failed to load table schema." << std::endl;
+        return;
+    }
+
+    int rowWidth = 0;
+    std::vector<int> fieldOffsets;
+    for (const auto& col : table.columns) {
+        fieldOffsets.push_back(rowWidth);
+        rowWidth += col.length;
+    }
+
+    std::vector<char> rowBuffer(rowWidth);
+    std::map<std::string, int> columnMap;
+    for (int i = 0; i < table.columns.size(); ++i) {
+        columnMap[table.columns[i].name] = i;
+    }
+
+    std::set<int> columnsToSkip;
+    for (const auto& colName : columnsToDelete) {
+        if (columnMap.find(colName) != columnMap.end()) {
+            columnsToSkip.insert(columnMap[colName]);
+        }
+    }
+
+    while (inFile.read(rowBuffer.data(), rowWidth)) {
+        for (int i = 0; i < table.columns.size(); ++i) {
+            if (columnsToSkip.find(i) == columnsToSkip.end()) {
+                outFile.write(rowBuffer.data() + fieldOffsets[i], table.columns[i].length);
+            }
+        }
+    }
+
+    inFile.close();
+    outFile.close();
+
+    std::vector<Table::Column> updatedColumns;
+    for (int i = 0; i < table.columns.size(); ++i) {
+        if (columnsToSkip.find(i) == columnsToSkip.end()) {
+            updatedColumns.push_back(table.columns[i]);
+        }
+    }
+    table.columns = updatedColumns; // Update the column list
+
+    std::ofstream schemaOutFile(schemaFilePath, std::ios::binary | std::ios::trunc);
+    if (!schemaOutFile) {
+        std::cerr << "Failed to open schema file for writing." << std::endl;
+        return;
+    }
+    table.writeToDisk(schemaOutFile);
+    schemaOutFile.close();
+
+    fs::remove(dataFilePath);
+    fs::rename(tempFilePath, dataFilePath);
+
+    std::cout << "Specified columns have been successfully deleted from the file and the schema updated." << std::endl;
 }

@@ -35,6 +35,7 @@ int main() {
     // 读取全表
     std::cout << "读取全表：" << std::endl;
     tableManager.readTableData(dbName, tableName);
+    //更改表名
 
     // 自定义读取表
     std::cout << "条件读取：" << std::endl;
@@ -44,7 +45,7 @@ int main() {
     std::vector<std::string> fieldNames = { "ID", "Name" };
     tableManager.readRecords(dbName, tableName, fieldNames, record4, record5, record6);
 
-    // 自定义删表
+//    // 自定义删表
 //    std::cout << "删除后读取全表：" << std::endl;
 //    tableManager.deleteRecords(dbName, tableName, record4, record5, record6);
 //    tableManager.readTableData(dbName, tableName);
@@ -58,6 +59,20 @@ int main() {
     // 排序读取
     std::cout << "排序读取：" << std::endl;
     tableManager.orderByRecord(dbName, tableName, record4, {"ASC"}, fieldNames);
-
+    //增加列
+    printf("*****************************\n");
+    std::vector<std::string> addNames = { "Company" };
+    std::vector<std::string> addNames_types = { "str" };
+    std::vector<int> addNames_lengths = { 32 };
+    std::vector<bool> addNames_isPrimaryKeys = {false};
+    std::vector<bool> addNames_isNullables = {true};
+    std::vector<std::string> addNames_defaultValues = {"BJTU"};
+    tableManager.alter_addColumnToTable(dbName, tableName,addNames,addNames_types,addNames_lengths,addNames_isPrimaryKeys,addNames_isNullables,addNames_defaultValues);
+    tableManager.readTableData(dbName, tableName);
+    //删除列
+    printf("*****************************\n");
+    std::vector<std::string> dropNames = { "Company" };
+    tableManager.alter_deleteColumns(dbName, tableName,dropNames);
+    tableManager.readTableData(dbName, tableName);
     return 0;
 }
