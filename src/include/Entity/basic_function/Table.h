@@ -25,6 +25,7 @@ public:
     void addColumn(const std::string& name, const std::string& type, int length, bool isPrimaryKey, bool isNullable, const std::string& defaultValue);
     void dropColumn(const std::string& name);
     void writeToDisk(std::ofstream& outFile) const;
+    void readFromDisk(std::ifstream& inFile);
 };
 
 #endif // RECORD_H

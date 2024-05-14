@@ -228,5 +228,10 @@ public:
     void alter_deleteColumns(const std::string& dbName,
                                         const std::string& tableName,
                                         const std::vector<std::string>& columnsToDelete);
+
+
+    std::vector<std::string> readColumnData(const std::string& dbName,
+                                                            const std::string& tableName,
+                                                            const std::string& columnName);
 };
 #endif // TABLE_MANAGER_H

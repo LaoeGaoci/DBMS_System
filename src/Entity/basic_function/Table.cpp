@@ -49,3 +49,24 @@ void Table::writeToDisk(std::ofstream& outFile) const {
         outFile.write(defaultValue.c_str(), 32);
     }
 }
+
+// ¥”¥≈≈Ã∂¡»°±Ì
+void Table::readFromDisk(std::ifstream& inFile) {
+    int numColumns;
+    inFile.read(reinterpret_cast<char*>(&numColumns), sizeof(numColumns));
+    columns.resize(numColumns);
+
+    for (auto& column : columns) {
+        char name[32], type[32], defaultValue[32];
+        inFile.read(name, 32);
+        inFile.read(type, 32);
+        inFile.read(reinterpret_cast<char*>(&column.length), sizeof(column.length));
+        inFile.read(reinterpret_cast<char*>(&column.isPrimaryKey), sizeof(column.isPrimaryKey));
+        inFile.read(reinterpret_cast<char*>(&column.isNullable), sizeof(column.isNullable));
+        inFile.read(defaultValue, 32);
+
+        column.name = std::string(name);
+        column.type = std::string(type);
+        column.defaultValue = std::string(defaultValue);
+    }
+}

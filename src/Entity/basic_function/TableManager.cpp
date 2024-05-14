@@ -691,3 +691,66 @@ void TableManager::alter_deleteColumns(const std::string& dbName,
 
     std::cout << "Specified columns have been successfully deleted from the file and the schema updated." << std::endl;
 }
+
+// 读取列数据
+std::vector<std::string>TableManager::readColumnData(const std::string& dbName, const std::string& tableName, const std::string& columnName) {
+    fs::path dataFilePath = fs::current_path() / dbName / tableName / (tableName + ".trd");
+    std::vector<std::string> columnData;
+
+    Table table;
+    if (!loadTableSchema(dbName, tableName, table)) {
+        std::cerr << "Failed to load table schema." << std::endl;
+        return columnData;
+    }
+
+    std::ifstream dataFile(dataFilePath, std::ios::binary);
+    if (!dataFile) {
+        std::cerr << "Failed to open data file for reading." << std::endl;
+        return columnData;
+    }
+
+    int rowWidth = 0;
+    std::vector<int> fieldOffsets;
+    for (const auto& col : table.columns) {
+        fieldOffsets.push_back(rowWidth);
+        rowWidth += col.length;
+    }
+
+    std::vector<char> rowBuffer(rowWidth);
+    std::string fieldValue;
+
+    std::map<std::string, int> columnMap;
+    for (int i = 0; i < table.columns.size(); ++i) {
+        columnMap[table.columns[i].name] = i;
+    }
+
+    if (columnMap.find(columnName) == columnMap.end()) {
+        std::cerr << "Column not found." << std::endl;
+        return columnData;
+    }
+
+    int columnIndex = columnMap[columnName];
+    const auto& colType = table.columns[columnIndex].type;
+
+    while (dataFile.read(rowBuffer.data(), rowWidth)) {
+        if (colType == "integer") {
+            // Assumes integer is stored in binary format
+            int intValue;
+            memcpy(&intValue, rowBuffer.data() + fieldOffsets[columnIndex], sizeof(int));
+            columnData.push_back(std::to_string(intValue));
+        } else if (colType == "number") {
+            // Assumes number is stored as a floating point number
+            float floatValue;
+            memcpy(&floatValue, rowBuffer.data() + fieldOffsets[columnIndex], sizeof(float));
+            columnData.push_back(std::to_string(floatValue));
+        } else {
+            // Default case: treat as string
+            fieldValue.assign(rowBuffer.data() + fieldOffsets[columnIndex], table.columns[columnIndex].length);
+            fieldValue.erase(std::remove(fieldValue.begin(), fieldValue.end(), '\0'), fieldValue.end());
+            columnData.push_back(fieldValue);
+        }
+    }
+
+    dataFile.close();
+    return columnData;
+}
