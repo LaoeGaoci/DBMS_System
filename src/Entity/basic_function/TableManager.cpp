@@ -754,3 +754,110 @@ std::vector<std::string>TableManager::readColumnData(const std::string& dbName, 
     dataFile.close();
     return columnData;
 }
+void TableManager::changeColumn(const std::string& dbName,
+                                const std::string& tableName,
+                                const std::string& oldName,
+                                const std::string& newName,
+                                const std::string& newType,
+                                int newLength, bool newIsPrimaryKey, bool newIsNullable,
+                                const std::string& newDefaultValue) {
+    Table table;
+    if (!loadTableSchema(dbName, tableName, table)) {
+        std::cerr << "Failed to load table schema." << std::endl;
+        return;
+    }
+
+    auto it = std::find_if(table.columns.begin(), table.columns.end(), [&](const Table::Column& col) { return col.name == oldName; });
+    if (it == table.columns.end()) {
+        std::cerr << "Column not found" << std::endl;
+        return;
+    }
+
+    it->name = newName;
+    it->type = newType;
+    it->length = newLength;
+    it->isPrimaryKey = newIsPrimaryKey;
+    it->isNullable = newIsNullable;
+    it->defaultValue = newDefaultValue;
+
+    // Prepare paths for the original and temporary schema files
+    fs::path tableDirPath = fs::current_path() / dbName / tableName;
+    fs::path tempSchemaFilePath = tableDirPath / (tableName + "_temp.tdf");
+    fs::path schemaFilePath = tableDirPath / (tableName + ".tdf");
+
+    // Open the temporary schema file for writing
+    std::ofstream schemaFile(tempSchemaFilePath, std::ios::binary);
+    if (!schemaFile) {
+        std::cerr << "Failed to open temporary schema file for writing." << std::endl;
+        return;
+    }
+
+    // Write the updated table schema to the temporary file
+    table.writeToDisk(schemaFile);
+    schemaFile.close();
+
+    // Check for file write errors
+    if (!schemaFile.good()) {
+        fs::remove(tempSchemaFilePath);  // Cleanup temporary file on failure
+        std::cerr << "Failed to write to the temporary schema file correctly." << std::endl;
+        return;
+    }
+
+    // Replace the original schema file with the updated temporary file
+    try {
+        fs::rename(tempSchemaFilePath, schemaFilePath);
+        std::cout << "Table schema successfully updated." << std::endl;
+    } catch (const fs::filesystem_error& e) {
+        std::cerr << "Failed to replace the old schema file: " << e.what() << std::endl;
+    }
+}
+void TableManager::modifyColumn(const std::string& dbName, const std::string& tableName, const std::string& name, const std::string& newType, int newLength, bool newIsPrimaryKey, bool newIsNullable, const std::string& newDefaultValue) {
+    Table table;
+    if (!loadTableSchema(dbName, tableName, table)) {
+        std::cerr << "Failed to load table schema." << std::endl;
+        return;
+    }
+
+    auto it = std::find_if(table.columns.begin(), table.columns.end(), [&](const Table::Column& col) { return col.name == name; });
+    if (it == table.columns.end()) {
+        std::cerr << "Column not found" << std::endl;
+        return;
+    }
+
+    it->type = newType;
+    it->length = newLength;
+    it->isPrimaryKey = newIsPrimaryKey; // 修改主键属性
+    it->isNullable = newIsNullable;
+    it->defaultValue = newDefaultValue;
+
+    // 准备临时和原始模式文件的路径
+    fs::path tableDirPath = fs::current_path() / dbName / tableName;
+    fs::path tempSchemaFilePath = tableDirPath / (tableName + "_temp.tdf");
+    fs::path schemaFilePath = tableDirPath / (tableName + ".tdf");
+
+    // 打开临时模式文件进行写入
+    std::ofstream schemaFile(tempSchemaFilePath, std::ios::binary);
+    if (!schemaFile) {
+        std::cerr << "Failed to open temporary schema file for writing." << std::endl;
+        return;
+    }
+
+    // 将更新后的表模式写入临时文件
+    table.writeToDisk(schemaFile);
+    schemaFile.close();
+
+    // 检查文件写入错误
+    if (!schemaFile.good()) {
+        fs::remove(tempSchemaFilePath); // 失败时清理临时文件
+        std::cerr << "Failed to write to the temporary schema file correctly." << std::endl;
+        return;
+    }
+
+    // 使用更新后的临时文件替换原始文件
+    try {
+        fs::rename(tempSchemaFilePath, schemaFilePath);
+        std::cout << "Table schema successfully updated with new primary key settings." << std::endl;
+    } catch (const fs::filesystem_error& e) {
+        std::cerr << "Failed to replace the old schema file: " << e.what() << std::endl;
+    }
+}

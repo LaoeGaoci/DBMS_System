@@ -17,19 +17,19 @@ namespace fs = std::filesystem;
 class TableManager {
 public:
     /**
-     * �������ݱ�
+     * ?????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param columnNames �ֶ����б���
-     * @param columnTypes �ֶ������б�
-     * @param columnLengths ���ͳ����б�
-     * @param isPrimaryKeys �Ƿ�������
-     * @param isNullables �Ƿ�Ϊ��
-     * @param defaultValues Ĭ��ֵ
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param columnNames ??????б???
+     * @param columnTypes ????????б?
+     * @param columnLengths ????????б?
+     * @param isPrimaryKeys ?????????
+     * @param isNullables ??????
+     * @param defaultValues ????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void
     createTable(const std::string &dbName, const std::string &tableName, const std::vector<std::string> &columnNames,
@@ -38,64 +38,64 @@ public:
                 const std::vector<std::string> &defaultValues);
 
     /**
-     * ɾ�����ݱ�
+     * ????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
+     * @param dbName ?????????
+     * @param tableName ??????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void deleteTable(const std::string &dbName, const std::string &tableName);
 
     /**
-     * ��ȡ�ļ���ʽ
+     * ?????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param table Ҫ�������������
-     * @return ����ɹ���ȡ�ļ���ʽ����䵽����������򷵻� true�����򷵻� false
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param table ??????????????
+     * @return ???????????????????????????????? true??????? false
      *
-     * @author ������
+     * @author ??????
      */
     bool loadTableSchema(const std::string &dbName, const std::string &tableName, Table &table);
 
     /**
-     * �������ݱ�
+     * ?????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param recordData �������ݣ���ʱֻ����һ�в�ѯ��
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param recordData ???????????????????в????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void
     insertRecord(const std::string &dbName, const std::string &tableName, const std::vector<std::string> &recordData);
 
     /**
-     * ��ȡ����
+     * ???????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
+     * @param dbName ?????????
+     * @param tableName ??????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void readTableData(const std::string &dbName, const std::string &tableName);
 
     /**
-     * �Զ����ȡ��
+     * ?????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param fieldNames Ҫ��ȡ���ֶ����б�
-     * @param conditionColumn �����ֶ�
-     * @param operation �ȽϷ�
-     * @param conditionValue �Ƚ�ֵ
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param fieldNames ????????????б?
+     * @param conditionColumn ???????
+     * @param operation ????
+     * @param conditionValue ????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void readRecords(const std::string &dbName, const std::string &tableName,
                      const std::vector<std::string> &fieldNames,
@@ -104,16 +104,16 @@ public:
                      const std::vector<std::string> &conditionValue);
 
     /**
-     * �Զ���ɾ����
+     * ??????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param conditionColumn �����ֶ�
-     * @param operation �ȽϷ�
-     * @param conditionValue �Ƚ�ֵ
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param conditionColumn ???????
+     * @param operation ????
+     * @param conditionValue ????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void deleteRecords(const std::string &dbName, const std::string &tableName,
                        const std::vector<std::string> &conditionColumn,
@@ -121,39 +121,39 @@ public:
                        const std::vector<std::string> &conditionValue);
 
     /**
-     * �����ж�
+     * ?????ж?
      *
-     * @param fieldValue ���Ƚϵ��ֶ�
-     * @param op �ȽϷ�
-     * @param value ���Ƚϵ�ֵ
+     * @param fieldValue ?????????
+     * @param op ????
+     * @param value ???????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     bool checkCondition(const std::string &fieldValue, const std::string &op, const std::string &value);
 
     /**
-     * �ж��Ƿ�Ϊ������
+     * ?ж???????????
      *
-     * @param fieldValue ���Ƚϵ��ַ���
+     * @param fieldValue ???????????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     bool isNumber(const std::string &str);
 
     /**
-     * д��Լ������
+     * д?????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param columnNames �ֶ���
-     * @param isPrimaryKey �Ƿ�Ϊ����
-     * @param isNullable �Ƿ�Ϊ��
-     * @param defaultValues �ֶ�Ĭ��ֵ
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param columnNames ?????
+     * @param isPrimaryKey ????????
+     * @param isNullable ??????
+     * @param defaultValues ???????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     void updateTable(const std::string &dbName, const std::string &tableName,
                      const std::vector<std::string> &conditionColumn, const std::vector<std::string> &operation,
@@ -161,30 +161,29 @@ public:
                      const std::vector<std::string> &updateValue);
 
     /**
-     * �����ȡ��
+     * ????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param sortColumn �����ֶ�
-     * @param orders ˳��
-     * @param fieldNames �����ֶ�
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param sortColumn ???????
+     * @param orders ???
+     * @param fieldNames ???????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
-    void
-    orderByRecord(const std::string &dbName, const std::string &tableName, const std::vector<std::string> &sortColumn,
+    void orderByRecord(const std::string &dbName, const std::string &tableName, const std::vector<std::string> &sortColumn,
                   const std::vector<std::string> &orders, const std::vector<std::string> &fieldNames);
 
     /**
-     * ˳�򷵻ض�ȡ������
+     * ????????????
      *
-     * @param dbName ���ݿ�����
-     * @param tableName ������
-     * @param table �����
+     * @param dbName ?????????
+     * @param tableName ??????
+     * @param table ?????
      * @throws None
      *
-     * @author ������
+     * @author ??????
      */
     std::vector<std::vector<std::string>>
     readSortTableData(const std::string &dbName, const std::string &tableName, const Table &table);
@@ -229,9 +228,67 @@ public:
                                         const std::string& tableName,
                                         const std::vector<std::string>& columnsToDelete);
 
-
+    /**
+           * 单独读取某一列的数据
+           *
+           * @param dbName 数据库名称
+           * @param tableName 表名
+           * @param columnName 字段名
+           *
+           * @throws None
+           *
+           * @author 鄂日启
+           */
     std::vector<std::string> readColumnData(const std::string& dbName,
                                                             const std::string& tableName,
                                                             const std::string& columnName);
+/**
+           * modify函数
+           *
+           * @param dbName 数据库名称
+           * @param tableName 表名
+           * @param columnName 字段名
+           * @param newType 新加的字段类型
+           * @param newLength 新字段长度
+           * @param newIsPrimaryKey 是否为主键
+           * @param newIsNullable 是否为空
+           * @param newDefaultValue 新的默认值
+           * @throws filesystem_error
+           *
+           * @author 鄂日启
+           */
+    void modifyColumn(const std::string& dbName,
+                                    const std::string& tableName,
+                                    const std::string& columnName,
+                                    const std::string& newType,
+                                    int newLength,
+                                    bool newIsPrimaryKey,
+                                    bool newIsNullable,
+                                    const std::string& newDefaultValue);
+/**
+           * modify函数
+           *
+           * @param dbName 数据库名称
+           * @param tableName 表名
+           * @param columnName 字段名
+           * @param newType 新加的字段类型
+           * @param newLength 新字段长度
+           * @param newIsPrimaryKey 是否为主键
+           * @param newIsNullable 是否为空
+           * @param newDefaultValue 新的默认值
+           * @throws filesystem_error
+           *
+           * @author 鄂日启
+           */
+
+    void changeColumn(const std::string& dbName,
+                                    const std::string& tableName,
+                                    const std::string& oldName,
+                                    const std::string& newName,
+                                    const std::string& newType,
+                                    int newLength,
+                                    bool newIsPrimaryKey,
+                                    bool newIsNullable,
+                                    const std::string& newDefaultValue);
 };
 #endif // TABLE_MANAGER_H
