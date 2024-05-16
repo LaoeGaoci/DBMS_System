@@ -4,34 +4,6 @@
 #include "Entity/basic_function/AggregationFunctions.h"
 #include "Entity/basic_function/UserManager.h"
 
-void showPrimaryKeys(const std::string& dbName, const std::string& tableName) {
-    TableManager dbManager;  // Assume DatabaseManager has necessary methods
-    Table table;
-
-    // Load the table schema
-    if (!dbManager.loadTableSchema(dbName, tableName, table)) {
-        std::cerr << "Failed to load table schema for " << tableName << " in database " << dbName << "." << std::endl;
-        return;
-    }
-
-    // Display all primary keys
-    std::cout << "Primary keys in table '" << tableName << "':" << std::endl;
-    bool foundPrimaryKey = false;
-    for (const auto& column : table.columns) {
-        if (column.isPrimaryKey) {
-            foundPrimaryKey = true;
-            std::cout << "Column Name: " << column.name << "\n"
-                        << "  Type: " << column.type << "\n"
-                        << "  Length: " << column.length << "\n"
-                        << "  Is Nullable: " << (column.isNullable ? "Yes" : "No") << "\n"
-                        << "  Default Value: " << column.defaultValue << std::endl;
-        }
-    }
-
-    if (!foundPrimaryKey) {
-        std::cout << "No primary keys found in table '" << tableName << "'." << std::endl;
-    }
-}
 int main() {
     DatabaseManager dbManager; // 数据库管理器
     TableManager tableManager; // 表文件管理器

@@ -366,6 +366,6 @@ public:
      * @author 鄂日启
      */
     void changeColumn(const std::string& dbName, const std::string& tableName, const std::string& oldName, const std::string& newName, const std::string& newType, int newLength, bool newIsPrimaryKey, bool newIsNullable, const std::string& newDefaultValue);
-    void printTree(struct sqlNode* node);
+    //void printTree(struct sqlNode* node);
 };
 #endif // TABLE_MANAGER_H
