@@ -3,7 +3,7 @@
 namespace fs = std::filesystem;
 
 void DatabaseManager::createDatabase(const std::string& dbName) {
-    fs::path dbPath = fs::current_path() / dbName;
+    fs::path dbPath = fs::current_path() / "DB" / dbName;
     if (!fs::create_directory(dbPath)) {
         std::cerr << "Database creation failed or already exists." << std::endl;
     }
@@ -13,7 +13,7 @@ void DatabaseManager::createDatabase(const std::string& dbName) {
 }
 
 void DatabaseManager::deleteDatabase(const std::string& dbName) {
-    fs::path dbPath = fs::current_path() / dbName;
+    fs::path dbPath = fs::current_path() / "DB" / dbName;
     if (fs::remove_all(dbPath)) {
         std::cout << "Database deleted successfully." << std::endl;
     }

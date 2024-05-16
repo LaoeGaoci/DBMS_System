@@ -25,6 +25,7 @@ public:
      * @author º«ÓñÁú
      */
     void deleteDatabase(const std::string& dbName);
+
 };
 
 #endif // DATABASE_MANAGER_H
