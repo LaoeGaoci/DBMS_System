@@ -65,7 +65,7 @@ void TableManager::deleteTable(const std::string& dbName, const std::string& tab
 
     // 尝试删除表文件夹及其所有文件
     std::error_code ec; // 使用error_code避免异常
-    if (!fs::remove_all(tableDirPath, ec)) {
+    if (fs::remove_all(tableDirPath, ec) == 0u) {
         std::cerr << "Failed to delete table. Error: " << ec.message() << std::endl;
     }
     else {

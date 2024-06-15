@@ -14,7 +14,7 @@ void DatabaseManager::createDatabase(const std::string& dbName) {
 
 void DatabaseManager::deleteDatabase(const std::string& dbName) {
     fs::path dbPath = fs::current_path() / "DB" / dbName;
-    if (fs::remove_all(dbPath)) {
+    if (fs::remove_all(dbPath) != 0u) {
         std::cout << "Database deleted successfully." << std::endl;
     }
     else {
